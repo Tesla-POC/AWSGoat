@@ -1,0 +1,33 @@
+---
+# This workflow integrates qwiet.ai preZero with GitHub for php
+# Visit https://docs.shiftleft.io for help
+name: qwietqual
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch: {}
+
+jobs:
+  NextGen-Static-Analysis:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+    - name: Download QwietAI CLI
+      run: |
+        curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
+
+    - name: preZero Static Analysis
+      run: |
+        ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
+          --app QwietAI-php-GH \
+          --tag branch=${{ github.head_ref }} \
+      env:
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
+        SHIFTLEFT_API_HOST: www.shiftleft.io
+        SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
+        SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
