@@ -23,6 +23,8 @@ jobs:
 
     - name: preZero Static Analysis
       run: |
+        pwd 
+        ls -la
         ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
           --app AWSGOAT \
           --tag branch=${{ github.head_ref }} \
